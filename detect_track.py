@@ -41,6 +41,27 @@ from utils.general import (LOGGER, check_file, check_img_size, check_imshow, che
 from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, time_sync
 
+def print_output_phat(name_variable, variable):
+    try:
+        print(name_variable + " type: " + "---" + str(type(variable)) + "---")
+    except:
+        print("ko hien thi duoc TYPE()")
+    try:
+        print(name_variable + " len: " + "---" + str(len(variable)) + "---")
+    except:
+        print("ko hien thi duoc LEN()")
+    try:
+        print(name_variable + " shape: " + "---" + str(variable.shape) + "---")
+    except:
+        print("ko hien thi duoc SHAPE()")
+    try:
+        print(name_variable + " value: ", variable)
+    except:
+        print("ko hien thi duoc VALUE")
+    finally:
+        print("-------- ket thuc {0} ---------".format(name_variable))
+
+
 
 @torch.no_grad()
 def run(
@@ -73,10 +94,12 @@ def run(
 ):
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
+    print_output_phat("save_img", save_img)
     is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)
     is_url = source.lower().startswith(('rtsp://', 'rtmp://', 'http://', 'https://'))
     webcam = source.isnumeric() or source.endswith('.txt') or (is_url and not is_file)
     if is_url and is_file:
+        # kiểm tra file xem là loại file gì, nếu là Video hay image thì trả ra đường dẫn source như cũ
         source = check_file(source)  # download
 
     # DeepSORT -> Intializing tracker.

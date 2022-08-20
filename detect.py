@@ -45,7 +45,7 @@ from utils.general import (LOGGER, check_file, check_img_size, check_imshow, che
 from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, time_sync
 
-
+'''------------------------------------3.1 run function —— Pass in the parameter------------------------------------'''
 @torch.no_grad()
 def run(
         weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
@@ -75,6 +75,7 @@ def run(
         half=False,  # use FP16 half-precision inference
         dnn=False,  # use OpenCV DNN for ONNX inference
 ):
+    '''------------------------------------3.2 run function —— Initialize configuration---------------------------------------------'''
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
     is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)
@@ -93,6 +94,7 @@ def run(
     stride, names, pt = model.stride, model.names, model.pt
     imgsz = check_img_size(imgsz, s=stride)  # check image size
 
+    '''------------------------------------3.3 run function —— Load data---------------------------------------------'''
     # Dataloader
     if webcam:
         view_img = check_imshow()
@@ -104,6 +106,7 @@ def run(
         bs = 1  # batch_size
     vid_path, vid_writer = [None] * bs, [None] * bs
 
+    '''------------------------------------3.4 run function —— Input prediction---------------------------------------------'''
     # Run inference
     model.warmup(imgsz=(1 if pt else bs, 3, *imgsz))  # warmup
     dt, seen = [0.0, 0.0, 0.0], 0
@@ -123,6 +126,7 @@ def run(
         t3 = time_sync()
         dt[1] += t3 - t2
 
+        '''------------------------------------3.5 run function ——NMS---------------------------------------------'''
         # NMS
         pred = non_max_suppression(pred, conf_thres, iou_thres, classes, agnostic_nms, max_det=max_det)
         dt[2] += time_sync() - t3
@@ -130,6 +134,7 @@ def run(
         # Second-stage classifier (optional)
         # pred = utils.general.apply_classifier(pred, classifier_model, im, im0s)
 
+        '''------------------------------------3.6 run function —— Save print---------------------------------------------'''
         # Process predictions
         for i, det in enumerate(pred):  # per image
             seen += 1
@@ -198,6 +203,7 @@ def run(
         # Print time (inference-only)
         LOGGER.info(f'{s}Done. ({t3 - t2:.3f}s)')
 
+    '''------------------------------------3.7 run function —— Print results---------------------------------------------'''
     # Print results
     t = tuple(x / seen * 1E3 for x in dt)  # speeds per image
     LOGGER.info(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms NMS per image at shape {(1, 3, *imgsz)}' % t)
@@ -207,7 +213,7 @@ def run(
     if update:
         strip_optimizer(weights)  # update model (to fix SourceChangeWarning)
 
-
+'''------------------------------------1. function parse_opt（）---------------------------------------------'''
 def parse_opt():
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights', nargs='+', type=str, default=ROOT / 'yolov5s.pt', help='model path(s)')
@@ -241,7 +247,7 @@ def parse_opt():
     print_args(vars(opt))
     return opt
 
-
+'''------------------------------------2. function main()---------------------------------------------'''
 def main(opt):
     check_requirements(exclude=('tensorboard', 'thop'))
     run(**vars(opt))
