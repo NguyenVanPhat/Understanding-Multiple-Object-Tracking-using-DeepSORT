@@ -94,7 +94,7 @@ def run(
 ):
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
-    print_output_phat("save_img", save_img)
+    # print_output_phat("save_img", save_img)
     is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)
     is_url = source.lower().startswith(('rtsp://', 'rtmp://', 'http://', 'https://'))
     webcam = source.isnumeric() or source.endswith('.txt') or (is_url and not is_file)
@@ -106,6 +106,7 @@ def run(
     max_cosine_distance = 0.4
     nn_budget = None
     model_filename = './model_data/mars-small128.pb'
+    # khởi tạo function encoder
     encoder = gdet.create_box_encoder(model_filename, batch_size=1)
     metric = nn_matching.NearestNeighborDistanceMetric("cosine", max_cosine_distance, nn_budget)
     tracker = Tracker(metric)
